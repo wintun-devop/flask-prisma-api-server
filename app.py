@@ -52,7 +52,7 @@ async def get_product():
         db =Prisma(auto_register=True)
         await db.connect()
         if id:
-            # response = {}
+            response = {}
             product = await db.product.find_first(
                 where={
                 'id': id
@@ -71,6 +71,31 @@ async def get_product():
         response = {"message":f"Product id {id} was not found","status":"not_found"}
         return make_response(jsonify(response),404)
 
+@app.route("/api/v1/product",methods=["DELETE"])
+async def delete_product():
+    params = request.args
+    id = params['id']
+    try:
+        db =Prisma(auto_register=True)
+        await db.connect()
+        if id:
+            response = {}
+            delete_product = await db.product.delete(
+                where={
+                'id': id
+                }
+            )
+            if delete_product is not None:
+                print("deleted product>>>>",delete_product)
+                make_dict = dict(delete_product)
+                response = make_dict
+                return make_response(jsonify(response))
+            else:
+                response = {"message":f"Product id {id} was not found","status":"not_found"}
+                return make_response(jsonify(response),404)
+    except:
+        response = {"message":f"Product id {id} was not found","status":"not_found"}
+        return make_response(jsonify(response),404)
 
 
 if __name__ == "__main__":   
