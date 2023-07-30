@@ -19,7 +19,7 @@ def index():
   return make_response(jsonify(response))
 
 @app.route("/api/v1/product",methods=["POST"])
-async def create_item():
+async def create_product():
     #database connection
     db =Prisma(auto_register=True)
     await db.connect()
@@ -40,8 +40,16 @@ async def create_item():
         "status":"fail",
         "message":"Resource already exit!"
         }
-        return e
+        print("Error>>>",e)
+        return make_response(jsonify(response),400)
      
+# @app.route("/api/v1/product",methods=["GET"])
+# async def get_product():
+#     db =Prisma(auto_register=True)
+#     await db.connect()
+
+
+
 
 
 if __name__ == "__main__":   
