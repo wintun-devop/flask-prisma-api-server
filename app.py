@@ -42,13 +42,34 @@ async def create_product():
         }
         print("Error>>>",e)
         return make_response(jsonify(response),400)
-     
-# @app.route("/api/v1/product",methods=["GET"])
-# async def get_product():
-#     db =Prisma(auto_register=True)
-#     await db.connect()
 
 
+@app.route("/api/v1/product",methods=["GET"])
+async def get_product():
+    params = request.args
+    id = params['id']
+    try:
+        db =Prisma(auto_register=True)
+        await db.connect()
+        if id:
+            # response = {}
+            product = await db.product.find_first(
+                where={
+                'id': id
+                }
+            )
+            if product is not None:
+                print("single product>>>>",product)
+                make_dict = dict(product)
+                response = make_dict
+                return make_response(jsonify(response))
+            else:
+                response = {"message":f"Product id {id} was not found","status":"not_found"}
+                return make_response(jsonify(response),404)
+
+    except:
+        response = {"message":f"Product id {id} was not found","status":"not_found"}
+        return make_response(jsonify(response),404)
 
 
 
